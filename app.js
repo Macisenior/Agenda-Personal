@@ -25,6 +25,16 @@ const resumenHoy = document.getElementById("resumenHoy");
 let tareas = [];
 let mostrarTodoProximos = false;
 let mostrarTodoManana = false;
+// 🔔 permiso notificaciones
+async function pedirPermiso() {
+  const permiso = await Notification.requestPermission();
+
+  if (permiso === "granted") {
+    console.log("Permiso concedido 🔔");
+  } else {
+    console.log("Permiso denegado ❌");
+  }
+}
 
 // 🔹 fechas
 function hoy() {
@@ -55,7 +65,7 @@ function pintarTareas() {
     const li = document.createElement("li");
 
     const span = document.createElement("span");
-    span.textContent = tarea.texto;
+   span.textContent = tarea.texto + " ⏰ " + (tarea.hora || "");
     li.appendChild(span);
 
     // contar pendientes
@@ -151,12 +161,24 @@ boton.addEventListener("click", async function () {
 
   if (texto === "") return;
 
-  await addDoc(collection(db, "tareas"), {
-    texto,
-    fecha,
-    hecho: false
-  });
+ await addDoc(collection(db, "tareas"), {
+  texto,
+  fecha,
+  hora: inputHora.value || "09:00",
+  hecho: false
+}); 
+async function mostrarNotificacion(texto) {
+  if (Notification.permission === "granted") {
+    const registration = await navigator.serviceWorker.getRegistration();
 
+    if (registration) {
+      registration.showNotification("📅 Agenda", {
+        body: texto,
+        icon: "icon-192.png"
+      });
+    }
+  }
+}
   input.value = "";
   inputFecha.value = hoy();
   input.focus();
@@ -167,7 +189,18 @@ boton.addEventListener("click", async function () {
 // 🔹 cargar
 async function cargarTareas() {
   tareas = [];
+const ahora = horaActual();
 
+tareas.forEach(t => {
+  if (
+    t.fecha === hoy() &&
+    !t.hecho &&
+    t.hora &&
+    t.hora.slice(0,5) === ahora
+  ) {
+    mostrarNotificacion("⏰ " + t.texto);
+  }
+});
   const querySnapshot = await getDocs(collection(db, "tareas"));
 
   querySnapshot.forEach((docu) => {
@@ -178,7 +211,15 @@ async function cargarTareas() {
   });
 
   pintarTareas();
+    const pendientesHoy = tareas.filter(t => 
+    t.fecha === hoy() && !t.hecho
+  );
+
+  if (pendientesHoy.length > 0) {
+    mostrarNotificacion("Tienes " + pendientesHoy.length + " tareas pendientes hoy");
+  }
 }
+
 
 // 🔹 enter
 input.addEventListener("keydown", function (e) {
@@ -186,11 +227,24 @@ input.addEventListener("keydown", function (e) {
 });
 
 // 🔹 inicio
-window.onload = function () {
+window.onload = function () { 
   input.focus();
   inputFecha.value = hoy();
+  inputHora.value = "09:00";
+  pedirPermiso();
 };
+async function mostrarNotificacion(texto) {
+  if (Notification.permission === "granted") {
+    const registration = await navigator.serviceWorker.getRegistration();
 
+    if (registration) {
+      registration.showNotification("📅 Agenda", {
+        body: texto,
+        icon: "icon-192.png"
+      });
+    }
+  }
+}
 function setHoy() {
   inputFecha.value = hoy();
 }
@@ -207,3 +261,9 @@ cargarTareas();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+function horaActual() {
+  const ahora = new Date();
+  return ahora.toTimeString().slice(0,5);
+}setInterval(() => {
+  cargarTareas();
+}, 60000);
