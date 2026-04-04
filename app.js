@@ -8,6 +8,7 @@ import {
   doc, 
   updateDoc 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// 🔹 botón ir a Notas
 
 const input = document.getElementById("inputTarea");
 const inputFecha = document.getElementById("inputFecha");
@@ -214,10 +215,12 @@ tareas.forEach(t => {
     const pendientesHoy = tareas.filter(t => 
     t.fecha === hoy() && !t.hecho
   );
+const tiempoAhora = Date.now();
 
-  if (pendientesHoy.length > 0) {
-    mostrarNotificacion("Tienes " + pendientesHoy.length + " tareas pendientes hoy");
-  }
+if (pendientesHoy.length > 0 && ahora - ultimaNotificacion > 600000) { // 10 min
+  mostrarNotificacion("Tienes " + pendientesHoy.length + " tareas pendientes hoy");
+  ultimaNotificacion = ahora;
+}
 }
 
 
@@ -261,9 +264,23 @@ cargarTareas();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+// 🔹 botón ir a Notas
+const btnIrNotas = document.getElementById("btnIrNotas");
+
+if (btnIrNotas) {
+  btnIrNotas.addEventListener("click", () => {
+    window.location.href = "notas.html";
+  });
+}
 function horaActual() {
   const ahora = new Date();
   return ahora.toTimeString().slice(0,5);
 }setInterval(() => {
   cargarTareas();
 }, 60000);
+function irNotas() {
+  window.location.href = "notas.html";
+}
+
+// Exponerla al global
+window.irNotas = irNotas;
