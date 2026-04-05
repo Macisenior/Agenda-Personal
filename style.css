@@ -1,82 +1,131 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #ebe1d8;
+
+/* 🔥 RESET LIMPIO */
+* {
+  box-sizing: border-box;
   margin: 0;
-  padding: 15px;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* RESUMEN */
+/* 🎨 FONDO GENERAL */
+body {
+  background: linear-gradient(135deg, #f5f7fa, #e4e9f0);
+  color: #333;
+  padding: 15px;
+  min-height: 100vh;
+}
+
+/* 📊 RESUMEN */
 #resumenHoy {
-  background: #fef3c7;
+  background: #fff8e1;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 15px;
   font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-/* INPUTS */
+/* ✏️ INPUTS */
 input {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 10px;
-  border: 1px solid #f70808;
+  border: 1px solid #ddd;
   font-size: 16px;
+  transition: 0.2s;
 }
 
-/* BOTÓN PRINCIPAL */
+input:focus {
+  outline: none;
+  border: 1px solid #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+}
+
+/* 🔘 BOTÓN PRINCIPAL */
 #btnAgregar {
   width: 100%;
   padding: 14px;
-  background: #007bff;
+  background: linear-gradient(135deg, #007bff, #0056b3);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   margin-bottom: 15px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* BOTONES HOY / MAÑANA */
+#btnAgregar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,123,255,0.2);
+}
+
+/* 🔘 BOTONES GENERALES */
 button {
   padding: 10px;
-  margin-right: 5px;
   border: none;
   border-radius: 8px;
   background: #e4e6eb;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* LISTAS */
+button:hover {
+  background: #d6d8db;
+}
+
+/* 📋 LISTAS */
 ul {
   list-style: none;
   padding: 0;
 }
 
-/* TARJETAS DE TAREAS */
+/* 🧱 TARJETAS (TAREAS Y NOTAS) */
 li {
   background: white;
   padding: 14px;
   margin-bottom: 10px;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  transition: all 0.2s ease;
 }
 
-/* BOTÓN ELIMINAR */
+/* ✨ HOVER TARJETA */
+li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* 🔴 TAREA DE HOY */
+li[style*="red"] {
+  background: #ffe5e5 !important;
+  border-left: 4px solid #e74c3c;
+}
+
+/* ✅ COMPLETADA */
+li[style*="line-through"] {
+  background: #f0f0f0;
+}
+
+/* ❌ BOTÓN ELIMINAR */
 li button {
-  background: red;
+  background: #e74c3c;
   color: white;
   border-radius: 8px;
   padding: 6px 10px;
+  font-weight: bold;
+  transition: 0.2s;
 }
 
-/* HOY DESTACADO */
-li[style*="red"] {
-  background: #ffe5e5 !important;
+li button:hover {
+  background: #c0392b;
 }
 
-/* VER MÁS */
+/* 🔽 BOTÓN VER MÁS */
 #verMasContainer button,
 #verMasMananaContainer button {
   width: 100%;
@@ -86,295 +135,172 @@ li[style*="red"] {
   border-radius: 10px;
   margin-bottom: 10px;
 }
-input:focus {
-  outline: none;
-  border: 2px solid #007bff;
-}
-/* Reset básico */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+#verMasContainer button:hover,
+#verMasMananaContainer button:hover {
+  background: #218838;
 }
 
-/* Fondo y contenedor */
-body {
-  background: #f5f5f5;
-  color: #333;
-  padding: 20px;
-  min-height: 100vh;
-}
-
-h3 {
-  margin-bottom: 15px;
-  font-size: 1.4rem;
-  color: #2c3e50;
-}
-
-/* Inputs y botones */
-input[type="text"],
-input[type="date"],
-button {
-  font-size: 1rem;
-  padding: 10px 12px;
-  margin: 5px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-input[type="text"],
-input[type="date"] {
-  width: calc(100% - 24px);
-}
-
-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-/* Lista de notas */
-ul {
-  list-style: none;
-  margin-top: 15px;
-}
-
-li {
-  background: #fff;
-  padding: 12px 15px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: 0.2s;
-}
-
-li:hover {
-  background: #e8f0fe;
-}
-
-/* Botón eliminar dentro de lista */
-li button {
-  background-color: #e74c3c;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-weight: bold;
-}
-
-li button:hover {
-  background-color: #c0392b;
-}
-
-/* Contenedor de inputs */
-input,
-button {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  display: block;
-}
-
-/* Responsivo */
-@media (min-width: 600px) {
-  body {
-    max-width: 600px;
-    margin: auto;
-  }
-
-  input[type="text"], input[type="date"] {
-    width: calc(100% - 20px);
-  }
-}
-/* HEADER */
+/* 📱 HEADER NOTAS */
 .headerNotas {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #007bff;
+  background: linear-gradient(135deg, #007bff, #0056b3);
   color: white;
   padding: 12px 15px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 15px;
   position: sticky;
   top: 0;
 }
 
-/* FORM */
+/* 📝 FORM NOTAS */
 .formNotas {
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
 }
 
-.formNotas input, .formNotas button {
-  margin-bottom: 10px;
+/* 🎯 INDICADORES DE FECHA (NOTAS) */
+li[data-fecha="hoy"] {
+  border-left: 4px solid #e74c3c;
 }
 
-/* LISTA DE NOTAS */
-ul {
-  list-style: none;
-  padding: 0;
+li[data-fecha="mañana"] {
+  border-left: 4px solid #f1c40f;
 }
 
-li {
+li[data-fecha="proximo"] {
+  border-left: 4px solid #3498db;
+}
+
+/* 📱 RESPONSIVE */
+@media (min-width: 600px) {
+  body {
+    max-width: 600px;
+    margin: auto;
+  }
+}
+
+/* 🔥 CONTENEDOR NOTAS */
+#listaNotas {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 🧱 TARJETAS NOTAS */
+#listaNotas li {
+  flex-direction: column;
   align-items: flex-start;
-  background: #fff;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-/* Hover de tarjetas */
-li:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+/* ✨ HOVER */
+#listaNotas li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
 }
 
-/* Color según fecha */
-li[data-fecha]:before {
-  content: '';
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 8px;
-  background-color: green; /* default */
+/* ⭐ NOTA IMPORTANTE */
+#listaNotas li.importante {
+  background: linear-gradient(135deg, #fff7cc, #fff1a8);
+  border-left: 5px solid #f1c40f;
 }
 
-li[data-fecha="hoy"]:before { background-color: #e74c3c; } /* rojo para hoy */
-li[data-fecha="mañana"]:before { background-color: #f1c40f; } /* amarillo para mañana */
-li[data-fecha="proximo"]:before { background-color: #3498db; } /* azul para próximas */
+/* 📝 TEXTO */
+#listaNotas li span {
+  font-size: 16px;
+  line-height: 1.4;
+}
 
-/* BOTÓN ELIMINAR */
-li button {
+/* 📅 FECHA */
+.nota-fecha {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* 🔘 BOTONES */
+.nota-botones {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.nota-botones button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* ⭐ botón */
+.btn-star {
+  background: #f1c40f;
+  color: white;
+}
+
+/* ❌ botón */
+.btn-delete {
   background: #e74c3c;
   color: white;
-  border-radius: 8px;
-  padding: 6px 10px;
-  margin-left: 10px;
-}
-/* General */
-body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #f9f9f9;
-  color: #333;
 }
 
-/* Header */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #4CAF50;
-  color: #fff;
-  padding: 10px 15px;
+/* ✏️ botón */
+.btn-edit {
+  background: #3498db;
+  color: white;
 }
-
-header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-header button {
-  background: #fff;
-  color: #4CAF50;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-/* Input container */
-.input-container {
+.navTop {
   display: flex;
   gap: 10px;
-  padding: 15px;
+  margin-bottom: 15px;
 }
 
-.input-container input[type="text"] {
-  flex: 2;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.input-container input[type="date"] {
+.navTop button {
   flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.input-container button {
-  background: #4CAF50;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 10px;
+  border-radius: 12px;
+  background: #e9ecef;
   font-weight: bold;
 }
 
-/* Lista de notas */
-#listaNotas {
-  list-style: none;
-  padding: 0 15px;
-  margin: 0;
+.navTop button:hover {
+  background: #d6d8db;
 }
-
-#listaNotas li {
-  background: #fff;
-  margin-bottom: 10px;
-  padding: 12px 10px;
-  border-radius: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: transform 0.1s;
-}
-
-#listaNotas li:hover {
-  transform: scale(1.02);
-}
-
-#listaNotas li[data-fecha="hoy"] {
-  border-left: 5px solid #4CAF50;
-}
-
-#listaNotas li[data-fecha="mañana"] {
-  border-left: 5px solid #FFA500;
-}
-
-#listaNotas li[data-fecha="proximo"] {
-  border-left: 5px solid #888;
-}
-
-#listaNotas li button {
-  background: #f44336;
-  border: none;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 4px;
-  cursor: pointer;
+.cardProximos {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  text-align: center;
   font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.cardProximos:hover {
+  transform: translateY(-2px);
+}
+.cardProximos {
+  background: white;
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+}
+
+.cardProximos:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }

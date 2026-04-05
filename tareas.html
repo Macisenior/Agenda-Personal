@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Todas las tareas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 🔵 HEADER -->
+  <div class="headerNotas">
+    <h2>📋 Todas las tareas</h2>
+    <button onclick="window.location.href='index.html'">← Volver</button>
+  </div>
+
+  <!-- 🔎 BUSCADOR -->
+  <input 
+    type="text" 
+    id="buscadorTareas" 
+    placeholder="🔎 Buscar tarea..." 
+  />
+
+  <!-- 📋 LISTA -->
+  <ul id="listaTareas"></ul>
+
+  <script type="module" src="tareas.js"></script>
+
+</body>
+</html>
+

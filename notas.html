@@ -1,28 +1,55 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- estilos -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- 🔵 HEADER -->
   <div class="headerNotas">
-    <h3 id="resumenNotas">Tus notas</h3>
-    <button id="btnVolver">⬅ Volver</button>
+    <h2>📝 Notas</h2>
+    <button onclick="window.location.href='index.html'">← Volver</button>
   </div>
 
- <div class="formNotas">
-  <input type="text" id="inputNota" placeholder="Escribe tu nota aquí">
-  <input type="date" id="inputFechaNota">
-  <label>
-    <input type="checkbox" id="inputImportante"> Importante
-  </label>
-  <button id="btnAgregarNota">Añadir</button>
-</div>
+  <!-- 🔎 BUSCADOR -->
+  <input 
+    type="text" 
+    id="buscadorNotas" 
+    placeholder="🔎 Buscar nota..." 
+  />
 
+  <!-- 🧾 FORM -->
+  <div class="formNotas">
+    <input 
+      type="text" 
+      id="inputNota" 
+      placeholder="Escribe tu nota aquí"
+    >
+
+    <input 
+      type="date" 
+      id="inputFechaNota"
+    >
+
+    <label>
+      <input type="checkbox" id="inputImportante"> ⭐ Importante
+    </label>
+
+    <button id="btnAgregarNota">Añadir</button>
+  </div>
+
+  <!-- 📋 LISTA -->
   <ul id="listaNotas"></ul>
 
+  <!-- 🔥 JS -->
   <script type="module" src="notas.js"></script>
+
 </body>
 </html>
+

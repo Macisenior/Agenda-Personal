@@ -25,7 +25,10 @@
     <input type="date" id="inputFecha">
     <button id="btnAgregar">Añadir</button>
   </div>
-<button id="btnIrNotas">📝 Notas</button>
+<div class="navTop">
+  <button onclick="window.location.href='notas.html'">📝 Notas</button>
+  <button onclick="window.location.href='tareas.html'">📋 Ver todas</button>
+</div>
   <!-- LISTAS -->
   <h2>Hoy</h2>
   <ul id="listaHoy"></ul>
@@ -34,7 +37,10 @@
   <ul id="listaManana"></ul>
   <div id="verMasMananaContainer"></div>
 
-  <h2>Próximos</h2>
+ <h2>📅 Próximos</h2>
+<div class="cardProximos" onclick="window.location.href='tareas.html'">
+  📋 Ver todas las tareas →
+</div>
   <ul id="listaProximos"></ul>
   <div id="verMasContainer"></div>
 

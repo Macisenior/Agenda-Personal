@@ -1,3 +1,4 @@
+
 import { db } from "./firebase.js";
 
 import { 
@@ -8,10 +9,10 @@ import {
   doc, 
   updateDoc 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-// 🔹 botón ir a Notas
 
 const input = document.getElementById("inputTarea");
 const inputFecha = document.getElementById("inputFecha");
+const inputHora = document.getElementById("inputHora");
 const boton = document.getElementById("btnAgregar");
 
 const listaHoy = document.getElementById("listaHoy");
@@ -26,15 +27,10 @@ const resumenHoy = document.getElementById("resumenHoy");
 let tareas = [];
 let mostrarTodoProximos = false;
 let mostrarTodoManana = false;
-// 🔔 permiso notificaciones
+let timersActivos = {};
+// 🔔 permiso
 async function pedirPermiso() {
-  const permiso = await Notification.requestPermission();
-
-  if (permiso === "granted") {
-    console.log("Permiso concedido 🔔");
-  } else {
-    console.log("Permiso denegado ❌");
-  }
+  await Notification.requestPermission();
 }
 
 // 🔹 fechas
@@ -48,7 +44,68 @@ function manana() {
   return fecha.toISOString().split("T")[0];
 }
 
-// 🔹 pintar
+// 🔥 crear timestamp
+function crearTimestamp(fecha, hora) {
+  const [year, month, day] = fecha.split("-");
+  const [h, m] = hora.split(":");
+  return new Date(year, month - 1, day, h, m).getTime();
+}
+
+// 🔔 notificación
+async function mostrarNotificacion(texto) {
+  if (Notification.permission === "granted") {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration) {
+      registration.showNotification("📅 Agenda", {
+        body: texto,
+        icon: "icon-192.png"
+      });
+    }
+  }
+}
+
+// 🔄 marcar como notificada
+async function marcarComoNotificada(id) {
+  await updateDoc(doc(db, "tareas", id), {
+    notified: true
+  });
+}
+
+// 🔥 programar notificaciones PRO
+function programarNotificaciones(tareas) {
+  const ahora = Date.now();
+
+  tareas.forEach(tarea => {
+    if (!tarea.timestamp || tarea.notified) return;
+
+    // 🚫 evitar duplicados
+    if (timersActivos[tarea.id]) return;
+
+    const tiempoRestante = tarea.timestamp - ahora;
+
+    if (tiempoRestante <= 0) return;
+
+    timersActivos[tarea.id] = true;
+
+    // ⏰ exacta
+    setTimeout(() => {
+      mostrarNotificacion("⏰ " + tarea.texto);
+      marcarComoNotificada(tarea.id);
+      delete timersActivos[tarea.id];
+    }, tiempoRestante);
+
+    // ⏳ aviso previo
+    const avisoPrevio = tiempoRestante - (5 * 60 * 1000);
+
+    if (avisoPrevio > 0) {
+      setTimeout(() => {
+        mostrarNotificacion("⏳ En 5 min: " + tarea.texto);
+      }, avisoPrevio);
+    }
+  });
+}
+
+// 🔹 pintar (igual que tenías)
 function pintarTareas() {
   listaHoy.innerHTML = "";
   listaManana.innerHTML = "";
@@ -66,15 +123,11 @@ function pintarTareas() {
     const li = document.createElement("li");
 
     const span = document.createElement("span");
-   span.textContent = tarea.texto + " ⏰ " + (tarea.hora || "");
+    span.textContent = tarea.texto + " ⏰ " + (tarea.hora || "");
     li.appendChild(span);
 
-    // contar pendientes
-    if (tarea.fecha === hoy() && !tarea.hecho) {
-      pendientesHoy++;
-    }
+    if (tarea.fecha === hoy() && !tarea.hecho) pendientesHoy++;
 
-    // estilos
     if (tarea.hecho) {
       li.style.textDecoration = "line-through";
       li.style.opacity = "0.5";
@@ -83,7 +136,6 @@ function pintarTareas() {
       li.style.border = "2px solid red";
     }
 
-    // marcar hecho
     li.addEventListener("click", async function () {
       await updateDoc(doc(db, "tareas", tarea.id), {
         hecho: !tarea.hecho
@@ -91,7 +143,6 @@ function pintarTareas() {
       cargarTareas();
     });
 
-    // eliminar
     const btnEliminar = document.createElement("button");
     btnEliminar.textContent = "X";
 
@@ -103,7 +154,6 @@ function pintarTareas() {
 
     li.appendChild(btnEliminar);
 
-    // separar
     if (tarea.fecha === hoy()) {
       listaHoy.appendChild(li);
     } else if (tarea.fecha === manana()) {
@@ -113,76 +163,50 @@ function pintarTareas() {
     }
   });
 
-  // 🔴 resumen (AHORA CORRECTO)
-  if (pendientesHoy === 0) {
-    resumenHoy.textContent = "🟢 Todo al día";
-  } else {
-    resumenHoy.textContent = "🔴 Hoy: " + pendientesHoy + " pendientes";
-  }
+  resumenHoy.textContent = pendientesHoy === 0 
+    ? "🟢 Todo al día"
+    : "🔴 Hoy: " + pendientesHoy + " pendientes";
 
-  // 🔥 mañana
   let mostrarManana = mostrarTodoManana ? tareasManana : tareasManana.slice(0, 3);
-
   mostrarManana.forEach(li => listaManana.appendChild(li));
 
   if (tareasManana.length > 3) {
     const btn = document.createElement("button");
     btn.textContent = mostrarTodoManana ? "Ver menos" : "Ver más";
-
     btn.addEventListener("click", () => {
       mostrarTodoManana = !mostrarTodoManana;
       pintarTareas();
     });
-
     verMasMananaContainer.appendChild(btn);
   }
 
-  // 🔥 próximos
-  let mostrarProx = mostrarTodoProximos ? tareasProximas : tareasProximas.slice(0, 3);
+  
 
-  mostrarProx.forEach(li => listaProximos.appendChild(li));
-
-  if (tareasProximas.length > 3) {
-    const btn = document.createElement("button");
-    btn.textContent = mostrarTodoProximos ? "Ver menos" : "Ver más";
-
-    btn.addEventListener("click", () => {
-      mostrarTodoProximos = !mostrarTodoProximos;
-      pintarTareas();
-    });
-
-    verMasContainer.appendChild(btn);
-  }
+ 
 }
 
-// 🔹 añadir
+// 🔹 añadir tarea (ACTUALIZADO)
 boton.addEventListener("click", async function () {
   const texto = input.value;
   const fecha = inputFecha.value || hoy();
+  const hora = inputHora.value || "09:00";
 
   if (texto === "") return;
 
- await addDoc(collection(db, "tareas"), {
-  texto,
-  fecha,
-  hora: inputHora.value || "09:00",
-  hecho: false
-}); 
-async function mostrarNotificacion(texto) {
-  if (Notification.permission === "granted") {
-    const registration = await navigator.serviceWorker.getRegistration();
+  const timestamp = crearTimestamp(fecha, hora);
 
-    if (registration) {
-      registration.showNotification("📅 Agenda", {
-        body: texto,
-        icon: "icon-192.png"
-      });
-    }
-  }
-}
+  await addDoc(collection(db, "tareas"), {
+    texto,
+    fecha,
+    hora,
+    timestamp,
+    hecho: false,
+    notified: false
+  });
+
   input.value = "";
   inputFecha.value = hoy();
-  input.focus();
+  inputHora.value = "09:00";
 
   cargarTareas();
 });
@@ -190,18 +214,7 @@ async function mostrarNotificacion(texto) {
 // 🔹 cargar
 async function cargarTareas() {
   tareas = [];
-const ahora = horaActual();
 
-tareas.forEach(t => {
-  if (
-    t.fecha === hoy() &&
-    !t.hecho &&
-    t.hora &&
-    t.hora.slice(0,5) === ahora
-  ) {
-    mostrarNotificacion("⏰ " + t.texto);
-  }
-});
   const querySnapshot = await getDocs(collection(db, "tareas"));
 
   querySnapshot.forEach((docu) => {
@@ -212,22 +225,8 @@ tareas.forEach(t => {
   });
 
   pintarTareas();
-    const pendientesHoy = tareas.filter(t => 
-    t.fecha === hoy() && !t.hecho
-  );
-const tiempoAhora = Date.now();
-
-if (pendientesHoy.length > 0 && ahora - ultimaNotificacion > 600000) { // 10 min
-  mostrarNotificacion("Tienes " + pendientesHoy.length + " tareas pendientes hoy");
-  ultimaNotificacion = ahora;
+  programarNotificaciones(tareas); // 🔥 clave
 }
-}
-
-
-// 🔹 enter
-input.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") boton.click();
-});
 
 // 🔹 inicio
 window.onload = function () { 
@@ -236,35 +235,8 @@ window.onload = function () {
   inputHora.value = "09:00";
   pedirPermiso();
 };
-async function mostrarNotificacion(texto) {
-  if (Notification.permission === "granted") {
-    const registration = await navigator.serviceWorker.getRegistration();
 
-    if (registration) {
-      registration.showNotification("📅 Agenda", {
-        body: texto,
-        icon: "icon-192.png"
-      });
-    }
-  }
-}
-function setHoy() {
-  inputFecha.value = hoy();
-}
-
-function setManana() {
-  inputFecha.value = manana();
-}
-
-window.setHoy = setHoy;
-window.setManana = setManana;
-
-// 🔥 iniciar app
-cargarTareas();
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js");
-}
-// 🔹 botón ir a Notas
+// 🔹 navegación
 const btnIrNotas = document.getElementById("btnIrNotas");
 
 if (btnIrNotas) {
@@ -272,15 +244,10 @@ if (btnIrNotas) {
     window.location.href = "notas.html";
   });
 }
-function horaActual() {
-  const ahora = new Date();
-  return ahora.toTimeString().slice(0,5);
-}setInterval(() => {
-  cargarTareas();
-}, 60000);
-function irNotas() {
-  window.location.href = "notas.html";
-}
 
-// Exponerla al global
-window.irNotas = irNotas;
+// 🔥 iniciar
+cargarTareas();
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js");
+}
