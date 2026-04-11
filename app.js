@@ -7,9 +7,12 @@ import {
   getDocs, 
   deleteDoc, 
   doc, 
-  updateDoc 
+  updateDoc ,
+   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
+ const messaging = getMessaging();
 const input = document.getElementById("inputTarea");
 const inputFecha = document.getElementById("inputFecha");
 const inputHora = document.getElementById("inputHora");
@@ -21,13 +24,36 @@ const listaProximos = document.getElementById("listaProximos");
 
 const verMasContainer = document.getElementById("verMasContainer");
 const verMasMananaContainer = document.getElementById("verMasMananaContainer");
+const btnTestPush = document.getElementById("btnTestPush");
+const inputAviso = document.getElementById("inputAviso");
 
+if (btnTestPush) {
+  btnTestPush.addEventListener("click", async () => {
+
+    const registration = await navigator.serviceWorker.ready;
+
+    registration.showNotification("🚀 Notificación real", {
+      body: "Funciona incluso con app cerrada",
+      icon: "icon-192.png"
+    });
+
+  });
+}
 const resumenHoy = document.getElementById("resumenHoy");
-
+navigator.serviceWorker.register("./firebase-messaging-sw.js");
 let tareas = [];
 let mostrarTodoProximos = false;
 let mostrarTodoManana = false;
 let timersActivos = {};
+let registration;
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js")
+    .then(reg => {
+      registration = reg;
+      console.log("Service Worker registrado");
+    });
+}
 // 🔔 permiso
 async function pedirPermiso() {
   await Notification.requestPermission();
@@ -78,33 +104,77 @@ function programarNotificaciones(tareas) {
   tareas.forEach(tarea => {
     if (!tarea.timestamp || tarea.notified) return;
 
-    // 🚫 evitar duplicados
+    // evitar duplicados
     if (timersActivos[tarea.id]) return;
 
     const tiempoRestante = tarea.timestamp - ahora;
 
+    // evitar pasado
     if (tiempoRestante <= 0) return;
 
-    timersActivos[tarea.id] = true;
+    timersActivos[tarea.id] = {};
 
-    // ⏰ exacta
-    setTimeout(() => {
+    // ⏰ NOTIFICACIÓN EXACTA
+    timersActivos[tarea.id].exacto = setTimeout(() => {
       mostrarNotificacion("⏰ " + tarea.texto);
       marcarComoNotificada(tarea.id);
       delete timersActivos[tarea.id];
     }, tiempoRestante);
 
-    // ⏳ aviso previo
-    const avisoPrevio = tiempoRestante - (5 * 60 * 1000);
+    // 🔔 AVISOS INTELIGENTES
+    const avisos = [
+      { tiempo: 24 * 60 * 60 * 1000, texto: "📅 Mañana: " },
+      { tiempo: 60 * 60 * 1000, texto: "⏳ En 1 hora: " },
+      { tiempo: 5 * 60 * 1000, texto: "⏳ En 5 min: " }
+    ];
 
-    if (avisoPrevio > 0) {
-      setTimeout(() => {
-        mostrarNotificacion("⏳ En 5 min: " + tarea.texto);
-      }, avisoPrevio);
-    }
+    avisos.forEach(aviso => {
+      const tiempoAviso = tiempoRestante - aviso.tiempo;
+
+      if (tiempoAviso > 0) {
+        setTimeout(() => {
+          mostrarNotificacion(aviso.texto + tarea.texto);
+        }, tiempoAviso);
+      }
+    });
   });
 }
+function limpiarTimers() {
+  Object.values(timersActivos).forEach(t => {
+    if (t.exacto) clearTimeout(t.exacto);
+    if (t.previo) clearTimeout(t.previo);
+  });
+   timersActivos = {};
+ }
+ 
+async function activarNotificacionesPush() {
+  try {
+    const permiso = await Notification.requestPermission();
 
+    if (permiso === "granted") {
+
+      const registration = await navigator.serviceWorker.ready;
+
+      const token = await getToken(messaging, {
+        vapidKey: "BMwWV2k0c0nnGpzoOzk3t19Rb456zhbwO_C-abo2lqmvsgsdoPTZpjPyBaESicn3Ml-njY40ygQ6Ztd0VMvHUbU",
+        serviceWorkerRegistration: registration
+      });
+
+      console.log("TOKEN:", token);
+
+      // 🔥 GUARDAR TOKEN EN FIREBASE
+      await setDoc(doc(db, "tokens", token), {
+        token: token
+      });
+
+    } else {
+      console.log("Permiso denegado");
+    }
+
+  } catch (error) {
+    console.error("Error en push:", error);
+  }
+}
 // 🔹 pintar (igual que tenías)
 function pintarTareas() {
   listaHoy.innerHTML = "";
@@ -190,6 +260,7 @@ boton.addEventListener("click", async function () {
   const texto = input.value;
   const fecha = inputFecha.value || hoy();
   const hora = inputHora.value || "09:00";
+  const aviso = parseInt(inputAviso.value);
 
   if (texto === "") return;
 
@@ -200,6 +271,7 @@ boton.addEventListener("click", async function () {
     fecha,
     hora,
     timestamp,
+    aviso, // 🔥 ahora sí
     hecho: false,
     notified: false
   });
@@ -213,6 +285,7 @@ boton.addEventListener("click", async function () {
 
 // 🔹 cargar
 async function cargarTareas() {
+ limpiarTimers(); 
   tareas = [];
 
   const querySnapshot = await getDocs(collection(db, "tareas"));
@@ -234,6 +307,7 @@ window.onload = function () {
   inputFecha.value = hoy();
   inputHora.value = "09:00";
   pedirPermiso();
+  activarNotificacionesPush();
 };
 
 // 🔹 navegación
@@ -248,6 +322,11 @@ if (btnIrNotas) {
 // 🔥 iniciar
 cargarTareas();
 
+
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js");
+  navigator.serviceWorker.register("./service-worker.js")
+    .then(reg => {
+      registration = reg;
+      console.log("Service Worker registrado");
+    });
 }
