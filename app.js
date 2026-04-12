@@ -298,7 +298,7 @@ async function cargarTareas() {
   });
 
   pintarTareas();
-  programarNotificaciones(tareas); // 🔥 clave
+ // programarNotificaciones(tareas); // 🔥 clave
 }
 
 // 🔹 inicio
@@ -323,10 +323,5 @@ if (btnIrNotas) {
 cargarTareas();
 
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js")
-    .then(reg => {
-      registration = reg;
-      console.log("Service Worker registrado");
-    });
-}
+
+
