@@ -61,15 +61,26 @@ async function pedirPermiso() {
 
 // 🔹 fechas
 function hoy() {
-  return new Date().toISOString().split("T")[0];
+  const fecha = new Date();
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, "0");
+  const day = String(fecha.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function manana() {
   const fecha = new Date();
   fecha.setDate(fecha.getDate() + 1);
-  return fecha.toISOString().split("T")[0];
-}
 
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, "0");
+  const day = String(fecha.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+setInterval(() => {
+  cargarTareas();
+}, 60000);
 // 🔥 crear timestamp
 function crearTimestamp(fecha, hora) {
   const [year, month, day] = fecha.split("-");
@@ -322,6 +333,12 @@ if (btnIrNotas) {
 // 🔥 iniciar
 cargarTareas();
 
+window.setHoy = function () {
+  inputFecha.value = hoy();
+};
 
+window.setManana = function () {
+  inputFecha.value = manana();
+};
 
 

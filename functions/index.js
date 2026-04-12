@@ -5,23 +5,18 @@ admin.initializeApp();
 
 exports.notificarNuevaTarea = onDocumentCreated("tareas/{tareaId}", async (event) => {
 
+  const tarea = event.data.data(); // 🔥 FALTABA ESTO
 
-    const ahora = Date.now();
+  const ahora = Date.now();
 
-// tiempo de la tarea
-const tiempoTarea = tarea.timestamp;
+  const tiempoTarea = tarea.timestamp;
+  const avisoMs = (tarea.aviso || 0) * 60 * 1000;
+  const tiempoNotificacion = tiempoTarea - avisoMs;
 
-// minutos antes → milisegundos
-const avisoMs = (tarea.aviso || 0) * 60 * 1000;
-
-// cuándo avisar
-const tiempoNotificacion = tiempoTarea - avisoMs;
-
-// si aún no toca → no enviar
-if (ahora < tiempoNotificacion) {
-  console.log("Aún no es momento de notificar");
-  return;
-}
+  if (ahora < tiempoNotificacion) {
+    console.log("Aún no es momento de notificar");
+    return;
+  }
 
   const tokensSnapshot = await admin.firestore().collection("tokens").get();
 
@@ -35,14 +30,13 @@ if (ahora < tiempoNotificacion) {
     return;
   }
 
-  const payload = {
+  await admin.messaging().sendEachForMulticast({
+    tokens: tokens,
     notification: {
-      title: "📅 Nueva tarea",
+      title: "🆕 Nueva tarea",
       body: tarea.texto
     }
-  };
-
-  await admin.messaging().sendToDevice(tokens, payload);
+  });
 
   console.log("Notificación enviada");
 });
@@ -71,17 +65,29 @@ exports.notificacionesProgramadas = onSchedule("* * * * *", async () => {
     const avisoMs = (tarea.aviso || 0) * 60 * 1000;
     const tiempoNotificacion = tarea.timestamp - avisoMs;
 
-    if (ahora >= tiempoNotificacion) {
+   const margen = 2 * 60 * 1000; // 2 minutos
+console.log("------");
+console.log("Tarea:", tarea.texto);
+console.log("Timestamp:", tarea.timestamp);
+console.log("Aviso:", tarea.aviso);
+console.log("Ahora:", ahora);
+console.log("TiempoNotificacion:", tiempoNotificacion);
+console.log("Diferencia:", ahora - tiempoNotificacion);
+if (
+  ahora >= tiempoNotificacion &&
+  ahora <= tiempoNotificacion + margen &&
+  !tarea.notified
+) { 
 
-      const payload = {
-        notification: {
-          title: "⏰ Recordatorio",
-          body: tarea.texto
-        }
-      };
-
-      await admin.messaging().sendToDevice(tokens, payload);
-
+     
+await admin.messaging().sendEachForMulticast({
+  tokens: tokens,
+  notification: {
+    title: "⏰ Recordatorio",
+    body: tarea.texto
+  }
+});
+      
       // marcar como notificada
       await admin.firestore().collection("tareas").doc(doc.id).update({
         notified: true
