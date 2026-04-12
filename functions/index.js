@@ -31,12 +31,16 @@ exports.notificarNuevaTarea = onDocumentCreated("tareas/{tareaId}", async (event
   }
 
   await admin.messaging().sendEachForMulticast({
-    tokens: tokens,
-    notification: {
-      title: "🆕 Nueva tarea",
-      body: tarea.texto
-    }
-  });
+  tokens: tokens,
+  notification: {
+    title: "⏰ Recordatorio",
+    body: tarea.texto
+  },
+  data: {
+    title: "⏰ Recordatorio",
+    body: tarea.texto
+  }
+});
 
   console.log("Notificación enviada");
 });
@@ -82,6 +86,10 @@ if (
      
 await admin.messaging().sendEachForMulticast({
   tokens: tokens,
+  notification: {
+    title: "⏰ Recordatorio",
+    body: tarea.texto
+  },
   data: {
     title: "⏰ Recordatorio",
     body: tarea.texto
