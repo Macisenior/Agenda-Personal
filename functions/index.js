@@ -88,9 +88,7 @@ if (
   data: {
     title: "⏰ Recordatorio",
     body: tarea.texto
-  }
-   
-
+  }  
 });
       
       // marcar como notificada
