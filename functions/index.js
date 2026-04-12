@@ -86,13 +86,12 @@ if (
      
 await admin.messaging().sendEachForMulticast({
   tokens: tokens,
-  notification: {
-    title: "⏰ Recordatorio",
-    body: tarea.texto
-  },
-  data: {
-    title: "⏰ Recordatorio",
-    body: tarea.texto
+  webpush: {
+    notification: {
+      title: "⏰ Recordatorio",
+      body: tarea.texto,
+      icon: "/icon-192.png"
+    }
   }
 });
       
