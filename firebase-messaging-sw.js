@@ -1,26 +1,21 @@
-importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js");
+importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+   apiKey: "AIzaSyAQzsTZxkHS5P5N1iqWBVVmrMbNMPQb2QQ",
+  authDomain: "agenda--app-c0220.firebaseapp.com",
+  projectId: "agenda--app-c0220",
+  storageBucket: "agenda--app-c0220.firebasestorage.app",
+  messagingSenderId: "1057225751235",
+  appId: "1:1057225751235:web:d4243cc400c593b6504076"
 });
 
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
-  const data = payload.data;
+  console.log("Mensaje recibido en background:", payload);
 
-  self.registration.showNotification(data.title, {
-    body: data.body,
-    icon: "icon-192.png"
-  });
-});
-self.addEventListener("push", function (event) {
-  const data = event.data.json();
+  const data = payload.data;
 
   self.registration.showNotification(data.title, {
     body: data.body,
