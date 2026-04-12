@@ -83,16 +83,14 @@ if (
   !tarea.notified
 ) { 
 
-     
-await admin.messaging().sendEachForMulticast({
+ await admin.messaging().sendEachForMulticast({
   tokens: tokens,
-  webpush: {
-    notification: {
-      title: "⏰ Recordatorio",
-      body: tarea.texto,
-      icon: "/icon-192.png"
-    }
+  data: {
+    title: "⏰ Recordatorio",
+    body: tarea.texto
   }
+   
+
 });
       
       // marcar como notificada
