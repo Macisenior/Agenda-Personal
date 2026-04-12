@@ -82,7 +82,7 @@ if (
      
 await admin.messaging().sendEachForMulticast({
   tokens: tokens,
-  notification: {
+  data: {
     title: "⏰ Recordatorio",
     body: tarea.texto
   }
