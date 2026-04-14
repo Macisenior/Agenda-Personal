@@ -304,3 +304,82 @@ li[data-fecha="proximo"] {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
+.fila-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px; /* 🔥 separación */
+}
+
+.lado-izq {
+  display: flex;
+  gap: 8px;
+}
+#btnIrContactos {
+  background: linear-gradient(135deg, #6a5acd, #7b68ee);
+  color: white;
+  border-radius: 10px;
+  padding: 6px 12px;
+}
+.fila-top button {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+#btnIrContactos:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+.fila-accion {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+   align-items: center;
+}
+
+.fila-accion select {
+  flex: 2; /* 🔥 ocupa todo el espacio */
+   height: 45px;
+}
+
+.fila-accion button {
+  flex: 1; /* 🔥 ahora se equilibran */
+  height: 45px;
+}
+#listaContactos {
+  list-style: none;
+  padding: 0;
+}
+
+#listaContactos li {
+  background: #ffffff;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+   display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#listaContactos li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+#listaContactos button {
+  margin-top: 8px;
+  margin-right: 6px;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  background: #f0f0f0;
+}
+
+#listaContactos button:hover {
+  background: #e0e0e0;
+}
+.botones-contacto {
+  display: flex;
+  gap: 8px;
+    margin-top: 10px;
+}

@@ -24,21 +24,19 @@ const listaProximos = document.getElementById("listaProximos");
 
 const verMasContainer = document.getElementById("verMasContainer");
 const verMasMananaContainer = document.getElementById("verMasMananaContainer");
-const btnTestPush = document.getElementById("btnTestPush");
-const inputAviso = document.getElementById("inputAviso");
+const btnIrContactos = document.getElementById("btnIrContactos");
 
-if (btnTestPush) {
-  btnTestPush.addEventListener("click", async () => {
-
-    const registration = await navigator.serviceWorker.ready;
-
-    registration.showNotification("🚀 Notificación real", {
-      body: "Funciona incluso con app cerrada",
-      icon: "icon-192.png"
-    });
-
+if (btnIrContactos) {
+  btnIrContactos.addEventListener("click", () => {
+    window.location.href = "contactos.html";
   });
 }
+const inputAviso = document.getElementById("inputAviso");
+
+
+
+ 
+
 const resumenHoy = document.getElementById("resumenHoy");
 navigator.serviceWorker.register("./firebase-messaging-sw.js");
 let tareas = [];

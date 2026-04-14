@@ -32,7 +32,7 @@ exports.notificarNuevaTarea = onDocumentCreated("tareas/{tareaId}", async (event
 
   await admin.messaging().sendEachForMulticast({
   tokens: tokens,
-  notification: {
+  data: {
     title: "⏰ Recordatorio",
     body: tarea.texto
   },
