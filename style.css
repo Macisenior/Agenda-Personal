@@ -383,3 +383,21 @@ li[data-fecha="proximo"] {
   gap: 8px;
     margin-top: 10px;
 }
+body {
+  margin: 0;
+  padding: 10px;
+}
+
+#listaContactos li {
+  width: 100%;
+}input {
+  width: 100%;
+  box-sizing: border-box;
+}
+button {
+  width: 100%;
+}
+.container {
+  max-width: 600px;
+  margin: auto;
+}
