@@ -410,15 +410,15 @@ button {
 .dia {
   background: white;
   border-radius: 12px;
-  padding: 10px;
-  min-height: 60px;
 
+  height: 70px; /* 🔥 más grande */
+  
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
   font-weight: bold;
-  cursor: pointer;
 }
 .tiene-tareas {
   background: #ffe5e5;
@@ -453,4 +453,7 @@ button {
   padding: 15px;
   border-radius: 16px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+#calendario {
+  width: 100%;
 }
