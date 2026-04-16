@@ -178,7 +178,7 @@ li[data-fecha="proximo"] {
 /* 📱 RESPONSIVE */
 @media (min-width: 600px) {
   body {
-    max-width: 600px;
+  
     margin: auto;
   }
 }
@@ -398,26 +398,28 @@ button {
   width: 100%;
 }
 .container {
-  max-width: 600px;
-  margin: auto;
+  width: 100%;
+  max-width: none;
 }
 #calendario {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 
 .dia {
   background: white;
   border-radius: 12px;
 
-  height: 70px; /* 🔥 más grande */
+  aspect-ratio: 1 / 1; /* 🔥 clave */
   
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
+  font-size: 18px;
   font-weight: bold;
 }
 .tiene-tareas {
@@ -456,4 +458,14 @@ button {
 }
 #calendario {
   width: 100%;
+}
+.contenedor-calendario {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+@media (min-width: 768px) {
+  .contenedor-calendario {
+    max-width: 600px;
+  }
 }
