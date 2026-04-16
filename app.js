@@ -32,7 +32,13 @@ if (btnIrContactos) {
   });
 }
 const inputAviso = document.getElementById("inputAviso");
+const btnIrCalendario = document.getElementById("btnIrCalendario");
 
+if (btnIrCalendario) {
+  btnIrCalendario.addEventListener("click", () => {
+    window.location.href = "calendario.html";
+  });
+}
 
 
  
