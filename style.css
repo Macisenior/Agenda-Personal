@@ -469,3 +469,15 @@ button {
     max-width: 600px;
   }
 }
+#navCalendario {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 15px;
+}
+
+#navCalendario button {
+  width: auto;
+  padding: 10px 15px;
+}

@@ -8,20 +8,32 @@ import {
 
 const calendario = document.getElementById("calendario");
 const contenedor = document.getElementById("tareasDia");
+let fechaActual = new Date();
 
+const tituloMes = document.getElementById("tituloMes");
 let tareas = [];
 
 // 🔹 generar calendario
 function generarCalendario() {
-  const hoy = new Date();
-  const mes = hoy.getMonth();
-  const año = hoy.getFullYear();
+ const hoy = new Date();
 
-  const primerDia = new Date(año, mes, 1).getDay();
+const mes = fechaActual.getMonth();
+const año = fechaActual.getFullYear();
+
+ let primerDia = new Date(año, mes, 1).getDay();
+
+primerDia = primerDia === 0 ? 6 : primerDia - 1;
   const diasMes = new Date(año, mes + 1, 0).getDate();
 
   calendario.innerHTML = "";
+const nombresMeses = [
+  "Enero", "Febrero", "Marzo",
+  "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre",
+  "Octubre", "Noviembre", "Diciembre"
+];
 
+tituloMes.textContent = `${nombresMeses[mes]} ${año}`;
   // espacios vacíos inicio
   for (let i = 0; i < primerDia; i++) {
     calendario.innerHTML += "<div></div>";
@@ -124,3 +136,12 @@ async function cargarTareas() {
 
 // 🔹 iniciar
 cargarTareas();
+document.getElementById("btnAnterior").addEventListener("click", () => {
+  fechaActual.setMonth(fechaActual.getMonth() - 1);
+  generarCalendario();
+});
+
+document.getElementById("btnSiguiente").addEventListener("click", () => {
+  fechaActual.setMonth(fechaActual.getMonth() + 1);
+  generarCalendario();
+});
