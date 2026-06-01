@@ -12,7 +12,6 @@ let contactoEditando = null;
 let categoriaSeleccionada = "Todos";
 
 const inputNombre = document.getElementById("inputNombre");
-const inputTelefono = document.getElementById("inputTelefono");
 const inputDireccion = document.getElementById("inputDireccion");
 const btnGuardar = document.getElementById("btnGuardar");
 const lista = document.getElementById("listaContactos");
@@ -22,7 +21,9 @@ const inputPoblacion = document.getElementById("inputPoblacion");
 const inputProvincia = document.getElementById("inputProvincia");
 const inputCategoria = document.getElementById("inputCategoria");
 const inputCategoriaLibre = document.getElementById("inputCategoriaLibre");
-
+const inputMovil = document.getElementById("inputMovil");
+const inputFijo = document.getElementById("inputFijo"); 
+const inputEmail = document.getElementById("inputEmail");
 inputCategoria.addEventListener("change", () => {
 
   if (inputCategoria.value === "Personalizada") {
@@ -51,11 +52,13 @@ btnGuardar.addEventListener("click", async () => {
   if (contactoEditando) {
     await updateDoc(doc(db, "contactos", contactoEditando), {
       nombre: inputNombre.value,
-      telefono: inputTelefono.value,
-    direccion: inputDireccion.value,
-    cp: inputCP.value,
-    poblacion: inputPoblacion.value,
-    provincia: inputProvincia.value,
+      movil: inputMovil.value,
+      fijo: inputFijo.value,
+      email: inputEmail.value,
+      direccion: inputDireccion.value,
+      cp: inputCP.value,
+      poblacion: inputPoblacion.value,
+      provincia: inputProvincia.value,
     categoria:
   inputCategoria.value === "Personalizada"
     ? inputCategoriaLibre.value
@@ -67,7 +70,9 @@ btnGuardar.addEventListener("click", async () => {
   } else {
     await addDoc(collection(db, "contactos"), {
       nombre: inputNombre.value,
-      telefono: inputTelefono.value,
+      movil: inputMovil.value,
+      fijo: inputFijo.value,
+      email: inputEmail.value,
       direccion: inputDireccion.value,
       cp: inputCP.value,
       poblacion: inputPoblacion.value,
@@ -134,7 +139,11 @@ if (coincideBusqueda && coincideCategoria)  {
 info.innerHTML = `
   <strong>${c.nombre}</strong><br>
   ${c.categoria || "📌 Otros"}<br>
-  📞 ${c.telefono || "-"}<br>
+
+  ${c.movil ? `📱 ${c.movil}<br>` : ""}
+  ${c.fijo ? `☎️ ${c.fijo}<br>` : ""}
+  ${c.email ? `✉️ ${c.email}<br>` : ""}
+
   📍 ${c.direccion || ""} ${c.cp || ""} ${c.poblacion || ""} ${c.provincia || ""}
 `;
 
@@ -143,7 +152,9 @@ li.appendChild(info);
       // ✏️ editar
       li.addEventListener("click", () => {
         inputNombre.value = c.nombre;
-        inputTelefono.value = c.telefono || "";
+       inputMovil.value = c.movil || "";
+        inputFijo.value = c.fijo || "";
+        inputEmail.value = c.email || "";
         inputDireccion.value = c.direccion || "";
         inputCP.value = c.cp || "";
         inputPoblacion.value = c.poblacion || "";
@@ -157,16 +168,30 @@ const contBotones = document.createElement("div");
 contBotones.className = "botones-contacto";
 
 // 📞 llamar
-if (c.telefono) {
-  const btnLlamar = document.createElement("button");
-  btnLlamar.textContent = "📞";
+// 📱 móvil
+if (c.movil) {
+  const btnMovil = document.createElement("button");
+  btnMovil.textContent = "📱";
 
-  btnLlamar.addEventListener("click", (e) => {
+  btnMovil.addEventListener("click", (e) => {
     e.stopPropagation();
-    window.open(`tel:${c.telefono}`);
+    window.open(`tel:${c.movil}`);
   });
 
-  contBotones.appendChild(btnLlamar); // 🔥 AQUÍ (antes iba a li)
+  contBotones.appendChild(btnMovil);
+}
+
+// ☎️ fijo
+if (c.fijo) {
+  const btnFijo = document.createElement("button");
+  btnFijo.textContent = "☎️";
+
+  btnFijo.addEventListener("click", (e) => {
+    e.stopPropagation();
+    window.open(`tel:${c.fijo}`);
+  });
+
+  contBotones.appendChild(btnFijo);
 }
 
 // 📍 mapa
@@ -190,6 +215,19 @@ if (c.direccion) {
   });
 
   contBotones.appendChild(btnMapa); // 🔥 AQUÍ
+}
+// ✉️ email
+if (c.email) {
+
+  const btnEmail = document.createElement("button");
+  btnEmail.textContent = "✉️";
+
+  btnEmail.addEventListener("click", (e) => {
+    e.stopPropagation();
+    window.open(`mailto:${c.email}`);
+  });
+
+  contBotones.appendChild(btnEmail);
 }
       // 🗑️ eliminar
       const btnEliminar = document.createElement("button");
