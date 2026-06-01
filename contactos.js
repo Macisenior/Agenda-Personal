@@ -108,6 +108,7 @@ const categoriasFijas = [
   "Profesionales",
   "Necesarios",
   "Trabajo",
+   "Jesus Garcia Avisos",
   "Otros"
 ];
 
@@ -249,7 +250,9 @@ li.appendChild(contBotones);
 // 🔹 limpiar inputs
 function limpiarInputs() {
   inputNombre.value = "";
-  inputTelefono.value = "";
+  inputMovil.value = "";
+  inputFijo.value = "";
+  inputEmail.value = "";
   inputDireccion.value = "";
 }
 
