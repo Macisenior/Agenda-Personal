@@ -481,3 +481,16 @@ button {
   width: auto;
   padding: 10px 15px;
 }
+#filtrosCategorias {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 10px 0;
+  padding-bottom: 5px;
+}
+
+#filtrosCategorias button {
+  width: auto;
+  white-space: nowrap;
+  padding: 8px 12px;
+}

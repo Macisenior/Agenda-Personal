@@ -1,15 +1,36 @@
 <h2>Contactos</h2>
 
 <input id="inputBuscar" placeholder="🔎 Buscar contacto...">
-
+<div id="filtrosCategorias">
+  <button data-cat="Todos">📋 Todos</button>
+  <button data-cat="Favoritos">⭐ Favoritos</button>
+  <button data-cat="Familia">👨‍👩‍👧 Familia</button>
+  <button data-cat="Profesionales">👨‍🔧 Profesionales</button>
+  <button data-cat="Necesarios">📞 Necesarios</button>
+  <button data-cat="Trabajo">🏢 Trabajo</button>
+  <button data-cat="Otros">📌 Otros</button>
+  <button data-cat="Personalizadas">📌 Personalizadas</button>
+</div>
 <input id="inputNombre" placeholder="Nombre">
 <input id="inputTelefono" placeholder="Teléfono">
 <input id="inputDireccion" placeholder="Dirección">
 <input id="inputCP" placeholder="Código Postal">
 <input id="inputPoblacion" placeholder="Población">
 <input id="inputProvincia" placeholder="Provincia">
-
-
+<select id="inputCategoria">
+  <option value="Favoritos">⭐ Favoritos</option>
+  <option value="Familia">👨‍👩‍👧 Familia</option>
+  <option value="Necesarios">📞 Necesarios</option>
+  <option value="Profesionales">👨‍🔧 Profesionales</option>
+  <option value="Trabajo">🏢 Trabajo</option>
+  <option value="Otros">📌 Otros</option>
+  <option value="Personalizada">✏️ Personalizada</option>
+</select>
+<input
+  id="inputCategoriaLibre"
+  placeholder="Nombre categoría"
+  style="display:none;"
+>
 <button id="btnGuardar">Guardar</button>
 
 <ul id="listaContactos"></ul>

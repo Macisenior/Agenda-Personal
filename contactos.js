@@ -9,6 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 let contactoEditando = null;
+let categoriaSeleccionada = "Todos";
 
 const inputNombre = document.getElementById("inputNombre");
 const inputTelefono = document.getElementById("inputTelefono");
@@ -19,7 +20,29 @@ const inputBuscar = document.getElementById("inputBuscar");
 const inputCP = document.getElementById("inputCP");
 const inputPoblacion = document.getElementById("inputPoblacion");
 const inputProvincia = document.getElementById("inputProvincia");
+const inputCategoria = document.getElementById("inputCategoria");
+const inputCategoriaLibre = document.getElementById("inputCategoriaLibre");
 
+inputCategoria.addEventListener("change", () => {
+
+  if (inputCategoria.value === "Personalizada") {
+    inputCategoriaLibre.style.display = "block";
+  } else {
+    inputCategoriaLibre.style.display = "none";
+  }
+
+});
+document.querySelectorAll("#filtrosCategorias button").forEach(btn => {
+
+  btn.addEventListener("click", () => {
+
+    categoriaSeleccionada = btn.dataset.cat;
+
+    cargarContactos();
+
+  });
+
+});
 // 🔹 guardar contacto
 btnGuardar.addEventListener("click", async () => {
 
@@ -32,7 +55,11 @@ btnGuardar.addEventListener("click", async () => {
     direccion: inputDireccion.value,
     cp: inputCP.value,
     poblacion: inputPoblacion.value,
-    provincia: inputProvincia.value
+    provincia: inputProvincia.value,
+    categoria:
+  inputCategoria.value === "Personalizada"
+    ? inputCategoriaLibre.value
+    : inputCategoria.value
     });
 
     contactoEditando = null;
@@ -44,7 +71,11 @@ btnGuardar.addEventListener("click", async () => {
       direccion: inputDireccion.value,
       cp: inputCP.value,
       poblacion: inputPoblacion.value,
-     provincia: inputProvincia.value
+     provincia: inputProvincia.value,
+    categoria:
+  inputCategoria.value === "Personalizada"
+    ? inputCategoriaLibre.value
+    : inputCategoria.value
     });
   }
 
@@ -62,11 +93,39 @@ async function cargarContactos() {
   snapshot.forEach(docu => {
     const c = docu.data();
 
-    if (
-      c.nombre.toLowerCase().includes(filtro) ||
-      (c.telefono && c.telefono.includes(filtro)) ||
-      (c.direccion && c.direccion.toLowerCase().includes(filtro))
-    ) {
+  const coincideBusqueda =
+  c.nombre.toLowerCase().includes(filtro) ||
+  (c.telefono && c.telefono.includes(filtro)) ||
+  (c.direccion && c.direccion.toLowerCase().includes(filtro));
+const categoriasFijas = [
+  "Favoritos",
+  "Familia",
+  "Profesionales",
+  "Necesarios",
+  "Trabajo",
+  "Otros"
+];
+
+let coincideCategoria = false;
+
+if (categoriaSeleccionada === "Todos") {
+
+  coincideCategoria = true;
+
+} else if (categoriaSeleccionada === "Personalizadas") {
+
+  coincideCategoria =
+    c.categoria &&
+    !categoriasFijas.includes(c.categoria);
+
+} else {
+
+  coincideCategoria =
+    (c.categoria || "Otros") === categoriaSeleccionada;
+
+}
+
+if (coincideBusqueda && coincideCategoria)  {
 
       const li = document.createElement("li");
 
@@ -74,6 +133,7 @@ async function cargarContactos() {
 
 info.innerHTML = `
   <strong>${c.nombre}</strong><br>
+  ${c.categoria || "📌 Otros"}<br>
   📞 ${c.telefono || "-"}<br>
   📍 ${c.direccion || ""} ${c.cp || ""} ${c.poblacion || ""} ${c.provincia || ""}
 `;
@@ -88,6 +148,7 @@ li.appendChild(info);
         inputCP.value = c.cp || "";
         inputPoblacion.value = c.poblacion || "";
         inputProvincia.value = c.provincia || "";
+        inputCategoria.value = c.categoria || "Otros";
         contactoEditando = docu.id;
       });
 
