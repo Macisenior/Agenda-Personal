@@ -25,7 +25,7 @@ const listaProximos = document.getElementById("listaProximos");
 const verMasContainer = document.getElementById("verMasContainer");
 const verMasMananaContainer = document.getElementById("verMasMananaContainer");
 const btnIrContactos = document.getElementById("btnIrContactos");
-
+const btnExportar = document.getElementById("btnExportar");
 if (btnIrContactos) {
   btnIrContactos.addEventListener("click", () => {
     window.location.href = "contactos.html";
@@ -344,5 +344,66 @@ window.setHoy = function () {
 window.setManana = function () {
   inputFecha.value = manana();
 };
+// 💾 EXPORTAR DATOS
+if (btnExportar) {
+
+  btnExportar.addEventListener("click", async () => {
+
+    try {
+
+      const backup = {};
+
+      // contactos
+      const contactosSnap = await getDocs(collection(db, "contactos"));
+      backup.contactos = contactosSnap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // tareas
+      const tareasSnap = await getDocs(collection(db, "tareas"));
+      backup.tareas = tareasSnap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // notas
+      const notasSnap = await getDocs(collection(db, "notas"));
+      backup.notas = notasSnap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      const contenido = JSON.stringify(backup, null, 2);
+
+      const blob = new Blob(
+        [contenido],
+        { type: "application/json" }
+      );
+
+      const enlace = document.createElement("a");
+
+      const fecha = new Date().toISOString().split("T")[0];
+
+      enlace.href = URL.createObjectURL(blob);
+      enlace.download = `agenda_backup_${fecha}.json`;
+
+      enlace.click();
+
+      URL.revokeObjectURL(enlace.href);
+
+      alert("✅ Copia creada correctamente");
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert("❌ Error al crear la copia");
+
+    }
+
+  });
+
+}
 
 
